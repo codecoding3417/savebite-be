@@ -1,12 +1,13 @@
 package rest
 
 import (
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 	"savebite/internal/app/auth/usecase"
 	"savebite/internal/domain/dto"
 	"savebite/internal/domain/env"
 	"time"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
 type AuthHandler struct {
@@ -23,7 +24,6 @@ func NewAuthHandler(r fiber.Router, v *validator.Validate, u usecase.AuthUsecase
 	r = r.Group("/oauth")
 	r.Get("/redirect", AuthHandler.Redirect)
 	r.Post("/callback", AuthHandler.Callback)
-	r.Get("/callback", AuthHandler.Callback)
 }
 
 func (h *AuthHandler) Redirect(c *fiber.Ctx) error {
@@ -40,20 +40,14 @@ func (h *AuthHandler) Redirect(c *fiber.Ctx) error {
 
 	redirectURL := h.AuthUsecase.Redirect(state)
 
-	return c.Redirect(redirectURL, fiber.StatusTemporaryRedirect)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"redirect_url": redirectURL,
+	})
 }
 
 func (h *AuthHandler) Callback(c *fiber.Ctx) error {
 	req := dto.OAuthCallbackRequest{}
-	//if err := c.BodyParser(&req); err != nil {
-	//	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-	//		"error_code": "bad_request",
-	//		"error":      "Bad Request",
-	//		"message":    "Invalid Body Request",
-	//	})
-	//}
-
-	if err := c.QueryParser(&req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error_code": "bad_request",
 			"error":      "Bad Request",
