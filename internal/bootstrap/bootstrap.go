@@ -17,5 +17,5 @@ func Init() {
 
 	server.MountMiddlewares()
 	server.MountRoutes(db)
-	server.Start(env.AppEnv.AppPort)
+	server.Start("127.0.0.1:" + env.AppEnv.AppPort)
 }

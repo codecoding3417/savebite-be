@@ -22,7 +22,7 @@ import (
 
 type HTTPServer interface {
 	GetApp() *fiber.App
-	Start(part string)
+	Start(socket string)
 	MountMiddlewares()
 	MountRoutes(db *gorm.DB)
 }
@@ -43,12 +43,8 @@ func (s *httpServer) GetApp() *fiber.App {
 	return s.app
 }
 
-func (s *httpServer) Start(part string) {
-	if part[0] != ':' {
-		part = ":" + part
-	}
-
-	err := s.app.Listen(part)
+func (s *httpServer) Start(socket string) {
+	err := s.app.Listen(socket)
 
 	if err != nil {
 		panic(err)
