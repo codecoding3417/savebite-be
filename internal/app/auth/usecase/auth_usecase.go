@@ -60,7 +60,7 @@ func (u *AuthUsecase) Callback(data dto.OAuthCallbackRequest) (string, error) {
 		}
 	}
 
-	jwtToken, err := u.jwt.Create(user.ID, user.Name, user.Email)
+	jwtToken, err := u.jwt.Create(user.ID)
 	if err != nil {
 		return "", err
 	}

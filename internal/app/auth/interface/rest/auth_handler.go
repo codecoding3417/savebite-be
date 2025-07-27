@@ -21,7 +21,7 @@ func NewAuthHandler(r fiber.Router, v *validator.Validate, u usecase.AuthUsecase
 		AuthUsecase: u,
 	}
 
-	r = r.Group("/oauth")
+	r = r.Group("/auth/google/oauth")
 	r.Get("/redirect", AuthHandler.Redirect)
 	r.Post("/callback", AuthHandler.Callback)
 }
