@@ -37,9 +37,7 @@ func (m *Middleware) RequireAuth(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Locals("id", claims.ID.String())
-	c.Locals("email", claims.Email)
-	c.Locals("name", claims.Name)
+	c.Locals("userId", claims.UserID.String())
 
 	return c.Next()
 }

@@ -10,13 +10,11 @@ import (
 
 type Claims struct {
 	jwt.RegisteredClaims
-	ID    uuid.UUID
-	Name  string
-	Email string
+	UserID uuid.UUID
 }
 
 type CustomJWTItf interface {
-	Create(id uuid.UUID, name, email string) (string, error)
+	Create(id uuid.UUID) (string, error)
 	Decode(tokenString string, claim *Claims) error
 }
 
@@ -34,14 +32,12 @@ func getJWT() CustomJWTItf {
 	}
 }
 
-func (j *CustomJWTStruct) Create(id uuid.UUID, name, email string) (string, error) {
+func (j *CustomJWTStruct) Create(id uuid.UUID) (string, error) {
 	claims := Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.expiredTime)),
 		},
-		Name:  name,
-		Email: email,
-		ID:    id,
+		UserID: id,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
