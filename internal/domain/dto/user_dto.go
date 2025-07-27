@@ -12,3 +12,9 @@ type UserParam struct {
 	Name  string
 	Email string
 }
+
+type UserProfile struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}

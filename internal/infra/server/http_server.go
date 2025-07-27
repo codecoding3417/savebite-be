@@ -12,7 +12,9 @@ import (
 	AuthUsecase "savebite/internal/app/auth/usecase"
 	AnalysesHandler "savebite/internal/app/ingredient_analyses/interface/rest"
 	AnalysesUsecase "savebite/internal/app/ingredient_analyses/usecase"
+	UserHandler "savebite/internal/app/user/interface/rest"
 	"savebite/internal/app/user/repository"
+	UserUsecase "savebite/internal/app/user/usecase"
 	"savebite/internal/infra/gemini"
 	"savebite/internal/middlewares"
 	"savebite/pkg/jwt"
@@ -79,8 +81,10 @@ func (s *httpServer) MountRoutes(db *gorm.DB) {
 	userRepo := repository.NewUserRepo(db)
 
 	authUsecase := AuthUsecase.NewAuthUsecase(userRepo, oauth, jwt)
+	userUsecase := UserUsecase.NewUserUsecase(userRepo)
 	analysesUsecase := AnalysesUsecase.NewAnalysesUsecase(gemini, md)
 
 	AuthHandler.NewAuthHandler(v1, validator, authUsecase)
+	UserHandler.NewUserHandler(v1, userUsecase, middleware)
 	AnalysesHandler.NewAnalysesHandler(v1, middleware, analysesUsecase)
 }

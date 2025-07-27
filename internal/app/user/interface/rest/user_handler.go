@@ -1,0 +1,40 @@
+package rest
+
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"savebite/internal/app/user/usecase"
+	"savebite/internal/middlewares"
+)
+
+type UserHandler struct {
+	useCase usecase.UserUsecaseItf
+}
+
+func NewUserHandler(r fiber.Router, u usecase.UserUsecaseItf, m middlewares.MiddlewareItf) {
+	UserHandler := UserHandler{
+		useCase: u,
+	}
+
+	r = r.Group("/user", m.RequireAuth)
+	r.Get("/profile", UserHandler.GetUserProfile)
+}
+
+func (h *UserHandler) GetUserProfile(c *fiber.Ctx) error {
+	userId := c.Locals("userId").(string)
+	userUUID := uuid.MustParse(userId)
+	res, err := h.useCase.GetProfile(userUUID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error_code": "internal_server_error",
+			"error":      "Internal Server Error",
+			"message":    "Something went wrong on our end. Please try again later",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"id":    res.ID,
+		"email": res.Email,
+		"name":  res.Name,
+	})
+}
