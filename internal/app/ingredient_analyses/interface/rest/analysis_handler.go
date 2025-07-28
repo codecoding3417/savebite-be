@@ -17,7 +17,10 @@ func NewAnalysisHandler(router fiber.Router, m middlewares.MiddlewareItf, analys
 		analysisUsecase: analysisUsecase,
 	}
 
-	router = router.Group("/analyses", m.RequireAuth)
+	router = router.Group("/", m.RequireAuth)
+	router.Get("/me/analyses", AnalysisHandler.GetHistory)
+
+	router = router.Group("/analyses")
 	router.Post("/analyze", AnalysisHandler.Analyze)
 }
 
@@ -43,5 +46,25 @@ func (h *AnalysisHandler) Analyze(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(result)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"payload": result,
+	})
+}
+
+func (h *AnalysisHandler) GetHistory(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(string)
+	userUUID := uuid.MustParse(userID)
+
+	result, err := h.analysisUsecase.GetHistory(userUUID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error_code": "internal_server_error",
+			"error":      utils.StatusMessage(fiber.StatusInternalServerError),
+			"message":    "Something went wrong on our end. Please try again later",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"payload": result,
+	})
 }

@@ -9,10 +9,10 @@ import (
 )
 
 type AnalysisResult struct {
-	DetectedItems        []string `json:"detectedItems"`
-	UseableIngredients   []string `json:"useableIngredients"`
-	UnuseableIngredients []string `json:"unuseableIngredients"`
-	Feedback             string   `json:"feedback"`
+	DetectedItems       []string `json:"detectedItems"`
+	UsableIngredients   []string `json:"usableIngredients"`
+	UnusableIngredients []string `json:"unusableIngredients"`
+	Feedback            string   `json:"feedback"`
 }
 
 type GeminiItf interface {
@@ -86,8 +86,8 @@ func (g *GeminiStruct) AnalyzeIngredientImage(fileData []byte, mimeType string) 
 
 		{
 			\"detectedItems\": [],
-			\"useableIngredients\": [],
-			\"unuseableIngredients\": [],
+			\"usableIngredients\": [],
+			\"unusableIngredients\": [],
 			\"feedback\": \"[markdown]\"
 		}
 

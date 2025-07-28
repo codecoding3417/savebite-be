@@ -41,7 +41,9 @@ func (h *AuthHandler) Redirect(c *fiber.Ctx) error {
 	redirectURL := h.AuthUsecase.Redirect(state)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"redirect_url": redirectURL,
+		"payload": fiber.Map{
+			"redirect_url": redirectURL,
+		},
 	})
 }
 
@@ -73,6 +75,8 @@ func (h *AuthHandler) Callback(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"token": token,
+		"payload": fiber.Map{
+			"token": token,
+		},
 	})
 }

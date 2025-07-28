@@ -1,13 +1,15 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"savebite/internal/domain/entity"
 	"savebite/pkg/log"
 )
 
 type AnalysisRepoItf interface {
-	CreateWithIngredients(analysis *entity.Analysis) error
+	Create(analysis *entity.Analysis) error
+	GetByUserID(userID uuid.UUID) (*[]entity.Analysis, error)
 }
 
 type AnalysisRepo struct {
@@ -18,12 +20,26 @@ func NewAnalysisRepo(db *gorm.DB) AnalysisRepoItf {
 	return &AnalysisRepo{db}
 }
 
-func (r *AnalysisRepo) CreateWithIngredients(analysis *entity.Analysis) error {
+func (r *AnalysisRepo) GetByUserID(userID uuid.UUID) (*[]entity.Analysis, error) {
+	var analyses []entity.Analysis
+	err := r.db.Model(&entity.Analysis{}).Preload("Ingredients").Debug().Find(&analyses, entity.Analysis{
+		UserID: userID,
+	}).Error
+	if err != nil {
+		log.Error(log.LogInfo{
+			"error": err.Error(),
+		}, "[AnalysisRepo][GetByUserID] Failed to retrieve analyses")
+	}
+
+	return &analyses, err
+}
+
+func (r *AnalysisRepo) Create(analysis *entity.Analysis) error {
 	err := r.db.Create(analysis).Error
 	if err != nil {
 		log.Error(log.LogInfo{
 			"error": err.Error(),
-		}, "[AnalysisRepo][CreateWithIngredients] Failed to create analysis")
+		}, "[AnalysisRepo][Create] Failed to create analysis")
 	}
 
 	return err

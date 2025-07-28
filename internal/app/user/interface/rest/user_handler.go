@@ -34,8 +34,6 @@ func (h *UserHandler) GetUserProfile(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"id":    res.ID,
-		"email": res.Email,
-		"name":  res.Name,
+		"payload": res,
 	})
 }

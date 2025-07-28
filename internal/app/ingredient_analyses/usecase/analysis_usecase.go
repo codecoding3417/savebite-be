@@ -6,8 +6,10 @@ import (
 	"mime/multipart"
 	"path/filepath"
 	"savebite/internal/app/ingredient_analyses/repository"
+	"savebite/internal/domain/dto"
 	"savebite/internal/domain/entity"
 	"savebite/internal/infra/gemini"
+	"savebite/internal/infra/helper"
 	"savebite/pkg/log"
 	"savebite/pkg/markdown"
 	"strings"
@@ -15,6 +17,7 @@ import (
 
 type AnalysisUsecaseItf interface {
 	Analyze(image *multipart.FileHeader, userID uuid.UUID) (gemini.AnalysisResult, error)
+	GetHistory(userID uuid.UUID) ([]dto.AnalysisResponse, error)
 }
 
 type AnalysisUsecase struct {
@@ -77,19 +80,19 @@ func (u *AnalysisUsecase) Analyze(imageFile *multipart.FileHeader, userID uuid.U
 
 	var ingredients []entity.Ingredient
 
-	for _, ingredient := range result.UseableIngredients {
+	for _, ingredient := range result.UsableIngredients {
 		ingredients = append(ingredients, entity.Ingredient{
 			AnalysisID: analysisUUID,
 			Name:       ingredient,
-			Status:     "useable",
+			Status:     "usable",
 		})
 	}
 
-	for _, ingredient := range result.UnuseableIngredients {
+	for _, ingredient := range result.UnusableIngredients {
 		ingredients = append(ingredients, entity.Ingredient{
 			AnalysisID: analysisUUID,
 			Name:       ingredient,
-			Status:     "unuseable",
+			Status:     "unusable",
 		})
 	}
 
@@ -100,10 +103,47 @@ func (u *AnalysisUsecase) Analyze(imageFile *multipart.FileHeader, userID uuid.U
 		Ingredients: ingredients,
 	}
 
-	err = u.analysisRepo.CreateWithIngredients(analysis)
+	err = u.analysisRepo.Create(analysis)
 	if err != nil {
 		return gemini.AnalysisResult{}, err
 	}
 
 	return result, nil
+}
+
+func (u *AnalysisUsecase) GetHistory(userID uuid.UUID) ([]dto.AnalysisResponse, error) {
+	analyses, err := u.analysisRepo.GetByUserID(userID)
+	if err != nil {
+		return []dto.AnalysisResponse{}, err
+	}
+
+	var res []dto.AnalysisResponse
+
+	for _, analysis := range *analyses {
+		usableIngredients := []string{}
+		var unusableIngredients []string
+		var items []string
+
+		ingredients := analysis.Ingredients
+		for _, ingredient := range ingredients {
+			items = append(items, ingredient.Name)
+
+			if ingredient.Status == "usable" {
+				usableIngredients = append(usableIngredients, ingredient.Name)
+			} else if ingredient.Status == "unusable" {
+				unusableIngredients = append(unusableIngredients, ingredient.Name)
+			}
+		}
+
+		items = helper.RemoveDuplicate(items)
+
+		res = append(res, dto.AnalysisResponse{
+			DetectedItems:       items,
+			UsableIngredients:   usableIngredients,
+			UnusableIngredients: unusableIngredients,
+			Feedback:            analysis.Feedback,
+		})
+	}
+
+	return res, nil
 }
