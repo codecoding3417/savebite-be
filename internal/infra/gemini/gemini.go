@@ -9,9 +9,9 @@ import (
 )
 
 type AnalysisResult struct {
-	DetectedItems       []string `json:"detectedItems"`
-	UsableIngredients   []string `json:"usableIngredients"`
-	UnusableIngredients []string `json:"unusableIngredients"`
+	DetectedItems       []string `json:"detected_items"`
+	UsableIngredients   []string `json:"usable_ingredients"`
+	UnusableIngredients []string `json:"unusable_ingredients"`
 	Feedback            string   `json:"feedback"`
 }
 
@@ -85,9 +85,9 @@ func (g *GeminiStruct) AnalyzeIngredientImage(fileData []byte, mimeType string) 
 		6. FORMAT YOUR RESPONSE AS A VALID JSON OBJECT with these fields:
 
 		{
-			\"detectedItems\": [],
-			\"usableIngredients\": [],
-			\"unusableIngredients\": [],
+			\"detected_items\": [],
+			\"usable_ingredients\": [],
+			\"unusable_ingredients\": [],
 			\"feedback\": \"[markdown]\"
 		}
 
