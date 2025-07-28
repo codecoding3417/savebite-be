@@ -21,7 +21,7 @@ func NewUserHandler(r fiber.Router, u usecase.UserUsecaseItf, m middlewares.Midd
 }
 
 func (h *UserHandler) GetUserProfile(c *fiber.Ctx) error {
-	userId := c.Locals("userId").(string)
+	userId := c.Locals("userID").(string)
 	userUUID := uuid.MustParse(userId)
 	res, err := h.useCase.GetProfile(userUUID)
 	if err != nil {

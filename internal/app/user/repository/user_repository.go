@@ -25,7 +25,7 @@ func (r *UserRepo) Create(user *entity.User) error {
 	if err != nil {
 		log.Error(log.LogInfo{
 			"error": err.Error(),
-		}, "[UserRepository][Create] Database error")
+		}, "[UserRepository][Create] Failed to create user")
 	}
 
 	return err
