@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/utils"
 	"github.com/google/uuid"
-	"savebite/internal/app/ingredient_analyses/usecase"
+	"savebite/internal/app/analysis/usecase"
 	"savebite/internal/domain/dto"
 	"savebite/internal/middlewares"
 )

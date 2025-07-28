@@ -8,7 +8,7 @@ import (
 	"math"
 	"mime/multipart"
 	"path/filepath"
-	"savebite/internal/app/ingredient_analyses/repository"
+	"savebite/internal/app/analysis/repository"
 	"savebite/internal/domain/dto"
 	"savebite/internal/domain/entity"
 	"savebite/internal/infra/gemini"
