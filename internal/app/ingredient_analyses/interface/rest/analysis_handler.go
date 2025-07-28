@@ -17,7 +17,7 @@ func NewAnalysisHandler(router fiber.Router, m middlewares.MiddlewareItf, analys
 		analysisUsecase: analysisUsecase,
 	}
 
-	router = router.Group("/analysis", m.RequireAuth)
+	router = router.Group("/analyses", m.RequireAuth)
 	router.Post("/analyze", AnalysisHandler.Analyze)
 }
 

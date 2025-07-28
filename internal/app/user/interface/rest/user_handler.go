@@ -16,8 +16,9 @@ func NewUserHandler(r fiber.Router, u usecase.UserUsecaseItf, m middlewares.Midd
 		useCase: u,
 	}
 
-	r = r.Group("/user", m.RequireAuth)
-	r.Get("/profile", UserHandler.GetUserProfile)
+	r = r.Group("/", m.RequireAuth)
+	r.Get("/me", UserHandler.GetUserProfile)
+	r = r.Group("/users")
 }
 
 func (h *UserHandler) GetUserProfile(c *fiber.Ctx) error {
