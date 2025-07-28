@@ -27,6 +27,9 @@ type Env struct {
 
 	GeminiAPIKey string `mapstructure:"GEMINI_API_KEY"`
 	GeminiModel  string `mapstructure:"GEMINI_MODEL"`
+
+	SupabaseURL    string `mapstructure:"SUPABASE_URL"`
+	SupabaseSecret string `mapstructure:"SUPABASE_SECRET"`
 }
 
 var AppEnv = getEnv()

@@ -21,6 +21,7 @@ import (
 	"savebite/pkg/jwt"
 	"savebite/pkg/markdown"
 	"savebite/pkg/oauth"
+	"savebite/pkg/supabase"
 )
 
 type HTTPServer interface {
@@ -71,6 +72,7 @@ func (s *httpServer) MountRoutes(db *gorm.DB) {
 	jwt := jwt.JWT
 	gemini := gemini.Gemini
 	md := markdown.Markdown
+	supabase := supabase.Supabase
 
 	app := s.GetApp()
 
@@ -84,7 +86,7 @@ func (s *httpServer) MountRoutes(db *gorm.DB) {
 
 	authUsecase := AuthUsecase.NewAuthUsecase(userRepo, oauth, jwt)
 	userUsecase := UserUsecase.NewUserUsecase(userRepo)
-	analysisUsecase := AnalysisUsecase.NewAnalysisUsecase(analysisRepo, gemini, md)
+	analysisUsecase := AnalysisUsecase.NewAnalysisUsecase(analysisRepo, gemini, md, supabase)
 
 	AuthHandler.NewAuthHandler(v1, validator, authUsecase)
 	UserHandler.NewUserHandler(v1, userUsecase, middleware)

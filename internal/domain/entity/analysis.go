@@ -10,5 +10,6 @@ type Analysis struct {
 	UserID      uuid.UUID `gorm:"not null"`
 	Feedback    string    `gorm:"type:text;not null"`
 	Ingredients []Ingredient
+	ImageURL    string    `gorm:"type:varchar(255);not null"`
 	CreatedAt   time.Time `gorm:"type:timestamp;autoCreateTime"`
 }
